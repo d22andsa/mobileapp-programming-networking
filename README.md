@@ -1,42 +1,64 @@
-
 # Rapport
 
-**Skriv din rapport här!**
+**
+The point of this assignment was to fetch Json data from a URL that we then can specifically choose
+what data that is to be displayed in the application.
 
-_Du kan ta bort all text som finns sedan tidigare_.
+public class Mountain {
+private String ID;
+private String name;
+private String company;w
+private String location;
+private String category;
+@SerializedName("cost")
+private int feet;
+@SerializedName("size")
+private int meter;
+Map<String,String> auxdata;
 
-## Följande grundsyn gäller dugga-svar:
-
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
-
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
-
-```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
+    public String getName() {
+        return name;
     }
+
 }
-```
+In this code snippet the class "mountain" is created that we then declare variables for each data points in the Json URL that together represent a mountain.
+we then pick out what data we want to show in our application by creating a "get" method that returns the variable we want to use.
 
-Bilder läggs i samma mapp som markdown-filen.
 
-![](android.png)
+    private final String JSON_URL = "https://mobprog.webug.se/json-api?login=brom";
 
-Läs gärna:
+    ArrayList<Mountain> listOfMountains;
 
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
+    RecyclerView recyclerView;
+
+Later in the MainActivity we declare the URL of where we want to pull the data from aswell as make an ArrayList of type Mountain where the data is stored,
+and in the last row we declare our recycler view.
+
+@Override
+public void onPostExecute(String json) {
+Log.d("MainActivity", json);
+Gson gson = new Gson();
+
+        Type type = new TypeToken<ArrayList<Mountain>>() {
+
+        }.getType();
+        listOfMountains = gson.fromJson(json, type);
+        recyclerView = findViewById(R.id.recyclerView);
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, listOfMountains, new RecyclerViewAdapter.OnClickListener() {
+            @Override
+            public void onClick(Mountain item) {
+                Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+}
+Here we first declare and initialize gson which we use to serialize the Json data into a java object that we put in our ArrayList.
+We then declare and initialize an adapter. In the adapter we declare a onclick method that will show a text box from the top of the screen with the items name.
+The adapter will then send the relevant data to a viewholder which contains the layout for each individual item in the arraylist and will show it in the application as displayed in the "app" screenshot.
+
+**
+
